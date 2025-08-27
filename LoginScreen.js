@@ -31,7 +31,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-     
+      // Sign in user
       const userCred = await signInWithEmailAndPassword(auth, email, password);
 
       if (!userCred.user.emailVerified) {
@@ -39,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
         return;
       }
 
-      
+      // Fetch user role from Firestore
       const uid = userCred.user.uid;
       const docRef = doc(db, 'users', uid);
       const docSnap = await getDoc(docRef);
@@ -48,16 +48,14 @@ const LoginScreen = ({ navigation }) => {
         const userData = docSnap.data();
         const role = userData.role;
 
-      
+        // Redirect according to role
         if (!role || role === 'pending') {
           navigation.replace('Setup');
         } else if (role === 'Driver') {
           navigation.replace('DriverDashboard');
         } else if (role === 'Family') {
-          navigation.replace('FamilyDashboard');
-        } else if (role === 'Both') {
-          navigation.replace('CombinedDashboard');
-        } else {
+          navigation.replace('HomeFamily');
+        }  else {
           Alert.alert('Login Error', 'Invalid role found in your account.');
         }
       } else {
@@ -72,7 +70,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.headerWrapper}>
-        <View style={styles.pinkHeader}>
+        <View style={styles.greenHeader}>
           <Text style={styles.headerTitle}>Drivemate</Text>
           <Text style={styles.subTitle}>WELCOME BACK</Text>
           <Text style={styles.underline}>Login Here</Text>
@@ -129,7 +127,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: '#1d807c',
   },
-  pinkHeader: {
+  greenHeader: {
     paddingTop: 60,
     paddingBottom: 30,
     alignItems: 'center',
